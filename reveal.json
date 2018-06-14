@@ -1,0 +1,8 @@
+{
+    "transition": "slide",
+    "backgroundTransition": "slide",
+    "parallaxBackgroundImage": "wallpaper.jpg",
+    "parallaxBackgroundSize": "2100px 900px",
+    "parallaxBackgroundHorizontal": 200,
+    "parallaxBackgroundVertical": 50
+}
