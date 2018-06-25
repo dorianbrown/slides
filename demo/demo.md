@@ -1,11 +1,3 @@
----
-title: My Title
-author: The Master
-revealOptions:
-    transition: 'slide'
-    backgroundTransition: "slide"
----
-
 # Testing Reveal.js
 
 A showcase of `reveal-md`
