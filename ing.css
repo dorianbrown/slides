@@ -1,13 +1,18 @@
 /*********************************************
  * GLOBAL STYLES
  *********************************************/
+
+slides {
+    width: 720px;
+}
+
 body {
   background: #ffffff;
   background-color: #ffffff; }
 
 .reveal {
   font-family: "Source Sans Pro", Helvetica, sans-serif;
-  font-size: 24px;
+  font-size: 22px;
   font-weight: normal;
   color: rgb(118,118,118); }
 
@@ -107,6 +112,10 @@ body {
 .reveal ol ul {
   display: block;
   margin-left: 40px; }
+
+.reveal li {
+  margin: 0.5em;
+}
 
 .reveal dt {
   font-weight: bold; }
