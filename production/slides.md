@@ -242,7 +242,7 @@ Use `try/catch` when you think code might fail:
 ```python
 try:
     # This code might fail
-    output = f(input)
+    output = func(input)
 
 # This block is executed when it does with a SpecificError
 except SpecificError as e:
