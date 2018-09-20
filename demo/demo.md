@@ -82,7 +82,13 @@ Here we print a markdown table.
 
 Here's some awesome $\LaTeX$!
 
-$$\sum _{n=1}^{\infty}\frac{1}{n^2}=\frac{\pi^2}{6}$$
+$$y_t = F_t \Theta_t+ v_t$$
+
+State equation.
+
+$$\Theta_t = G_t \Theta_{t-1} + w_t$$
+
+With noise error terms ($v$ and $w$)
 
 ---
 

@@ -1,0 +1,147 @@
+
+# Libraries
+
+```{r, message = FALSE}
+
+library(RSQLite)
+library(lubridate)
+library(dbplyr)
+library(dplyr)
+library(purrr)
+library(ggplot2)
+library(xts)
+library(ggfortify)
+library(ggthemes)
+library(maps)
+library(mapdata)
+
+```
+
+# Data import
+
+```{r}
+
+# create db connection
+conn <- dbConnect(SQLite(), '/home/dorian/data/FPA_FOD_20170508.sqlite')
+
+# pull the fires table into RAM
+fires <- tbl(conn, "Fires") %>% collect()
+
+# disconnect from db
+dbDisconnect(conn)
+
+```
+
+# Preprocessing
+
+```{r}
+
+julian_to_date <- function(date_num) as.Date(date_num - 2458014.5, origin = '2017-09-18')
+
+# Date Julian days?!?!
+fires <- fires %>%
+    mutate(DISCOVERY_DATE = julian_to_date(DISCOVERY_DATE),
+           CONT_DATE = julian_to_date(CONT_DATE))
+
+# Overwriting the same column is bad practice, as the code block can't be rerun without reloading the data
+
+```
+
+# Getting the number of fires daily
+
+```{r}
+
+fires %>%
+    group_by(DISCOVERY_DATE) %>%
+    summarise(N = n()) %>%
+    ggplot(aes(DISCOVERY_DATE, N)) + geom_line()
+```
+
+That didn't work. Lets look at some summary statistics
+
+```{r}
+
+fires %>%
+    group_by(DISCOVERY_DATE) %>%
+    summarise(N = n()) %>%
+    summary()
+
+```
+
+The max is pretty far off the median, lets have a look at that
+
+```{r}
+
+fires %>%
+    group_by(DISCOVERY_DATE) %>%
+    summarise(N = n()) %>%
+    filter(N == max(.$N))
+
+```
+
+Lets see how many NA dates we have
+
+```{r}
+
+fires %>%
+    filter(DISCOVERY_DATE %>% is.na) %>%
+    nrow()
+
+```
+
+Lets try that again
+
+```{r}
+
+fires %>%
+    filter(!is.na(DISCOVERY_DATE)) %>%
+    group_by(DISCOVERY_DATE) %>%
+    summarise(N = n()) %>%
+    ggplot(aes(DISCOVERY_DATE, N)) + geom_line() + geom_smooth(method = "lm")
+
+```
+
+```{r}
+
+fires %>%
+    filter(!is.na(DISCOVERY_DATE)) %>%
+    group_by(DISCOVERY_DATE) %>%
+    summarise(N = n()) %>%
+    mutate(DOY = as.numeric(strftime(DISCOVERY_DATE, format = "%j"))) %>%
+    ggplot(aes(x = DOY, y = N, color = year(DISCOVERY_DATE))) + geom_line()
+
+```
+
+```{r}
+
+fires %>%
+    filter(!is.na(DISCOVERY_DATE)) %>%
+    mutate(DISCOVERY_MTH = floor_date(DISCOVERY_DATE, unit = "month")) %>%
+    group_by(DISCOVERY_MTH) %>%
+    summarise(N = n()) %>%
+    ggplot(aes(DISCOVERY_MTH, N)) + geom_line()
+
+```
+
+```{r}
+
+fires %>%
+    filter(!is.na(DISCOVERY_DATE)) %>%
+    mutate(DISCOVERY_MTH = floor_date(DISCOVERY_DATE, unit = "month")) %>%
+    group_by(DISCOVERY_MTH, STAT_CAUSE_DESCR) %>%
+    summarise(N = n()) %>%
+    ggplot(aes(DISCOVERY_MTH, N)) + geom_line() + geom_smooth() + facet_wrap(~STAT_CAUSE_DESCR, scales = "free")
+
+```
+
+# Burn-time of Fires
+
+Lets look at the burn-time distribution per fire cause
+
+```{r}
+
+fires %>%
+    mutate(BURN_DUR = as.numeric(CONT_DATE - DISCOVERY_DATE)) %>%
+    ggplot(aes(x = STAT_CAUSE_DESCR, y=BURN_DUR)) + geom_violin() + scale_y_log10()
+
+```

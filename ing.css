@@ -2,10 +2,6 @@
  * GLOBAL STYLES
  *********************************************/
 
-slides {
-    width: 720px;
-}
-
 body {
   background: #ffffff;
   background-color: #ffffff; }
@@ -158,7 +154,14 @@ body {
   text-transform: none; }
 
 .reveal p code {
-  padding: 4px 6px 0px 6px;
+  padding: 2px 6px 2px 6px;
+  border-radius: 5px;
+  /*background: #97c8ed;
+  color: #2370aa;*/
+  background: rgb(255,98,0,0.25);
+  color: #c05714; }
+.reveal li code {
+  padding: 2px 6px 2px 6px;
   border-radius: 5px;
   /*background: #97c8ed;
   color: #2370aa;*/
@@ -172,7 +175,9 @@ body {
   overflow: auto;
   max-height: 400px;
   word-wrap: normal; 
-  border-radius: 5px; }
+  border-radius: 5px;
+  font-size: 15px;
+  line-height: 1.5em; }
 
 .reveal table {
   margin: auto;
