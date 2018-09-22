@@ -123,6 +123,8 @@ The boundary is the set of points $\\{x \in \mathbb{R}^m: \beta^\intercal x = 0\
 
 <img src="images/decision_boundary.png" width="400">
 
+Notes: Decision boundary is linear because beta*x=0
+
 ---
 
 # Evaluating Models
@@ -189,12 +191,109 @@ Notes: Super nice for optimization
 
 ---
 
-# Optimization
+# Finding the Best Model Parameters
 
-## GD
+<img src="images/hill_xkcd.png">
 
-## SGD
+---
 
-## Newton-Rhapson
+## Gradient Descent Algorithm
+
+> Start at a random point, and follow the slope downwards until we stop
+
+<img src="images/grad_desc.png" width="50%">
+
+Notes: Simple intuition, which can help us understand the method
+
+----
+
+## Gradient Descent Algorithm
+
+> 1. Set $a_0$ to some starting parameters (e.g. 0)
+> 2. Until some condition (iterations, closeness), do:
+>   - Calculate $a_{n+1}=a_n - \gamma \nabla F(a_n)$
+
+<img src="images/grad_desc.png" width="50%">
+
+Note that we need to choose the **starting point $a_0$**, the **learning rate $\gamma$**, and the **stopping criterion**.
+
+----
+
+## Calculating Gradient $\nabla F(a_n)$
+
+> $\nabla f := \left(\frac{\partial f}{\partial x_1},\dots ,\frac{\partial f}{\partial x_m}\right)$
+
+With some math and the chain rule we can show that 
+
+$$\frac{\partial \log\mathcal{L}}{\partial \beta\_j} = \sum\_{i=1}^n \left(\hat{y}_\beta(x^i) - y^i\right)x^i_j$$
+
+We can vectorize this to:
+
+$$ \nabla \log \mathcal{L} = x^\intercal \left(\hat{y}_\beta(x) - y\right)$$
+
+----
+
+## Learning rate
+
+Watch out what learning rate is chosen:
+
+<img src="images/learning_rate.jpeg" width="45%">
+
+There are dynamic learning rates $\gamma_n$ which calculate the optimal rate
+
+----
+
+# Normalizing features
+
+<img src="images/normalized_gd.png">
+
+Normalizing features can make convergence faster
+
+----
+
+## Gradient Descent Algorithm
+
+Some limitations:
+
+1. Slow converge (there are faster methods)
+2. Only finds global maximum on convex functions
+3. Our objective function must be differentiable to find gradient
+
+----
+
+## Stochastic Gradient Descent
+
+Often Stochastic Gradient Descent is used instead of plan GD
+
+> Instead of calculating the gradient $\nabla \log \mathcal{L}$ on all rows of data: 
+> - randomly pick a row $x_i$
+> - update $\beta$ with the gradient for the loss at $x_i$
+> - if stopping criterion is fulfilled, stop
+
+**Mini-batch gradient descent** uses a batch $\\{x_i,\dots,x_j\\}$ for updating $\beta$
+
+---
+
+## SGD Performance
+
+In practice, stochastic GD methods are faster than GD
+
+---
 
 ## BFGS/L-BFGS
+
+---
+
+# Regularization
+
+----
+
+## Bias-Variance Trade-off
+
+---
+
+## L2 Regularization
+
+---
+
+## L1 Regularization
