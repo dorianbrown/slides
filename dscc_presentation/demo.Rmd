@@ -22,10 +22,13 @@ library(mapdata)
 ```{r}
 
 # create db connection
-conn <- dbConnect(SQLite(), '/home/dorian/data/FPA_FOD_20170508.sqlite')
+conn <- dbConnect(SQLite(), '/data/wildfires/wildfires.sqlite')
 
 # pull the fires table into RAM
-fires <- tbl(conn, "Fires") %>% collect()
+fires <- tbl(conn, "Fires") %>%
+    select(FIRE_NAME, DISCOVERY_DATE, DISCOVERY_TIME, STAT_CAUSE_DESCR,
+           CONT_DATE, CONT_TIME, FIRE_SIZE, LATITUDE, LONGITUDE, STATE) %>%
+    collect()
 
 # disconnect from db
 dbDisconnect(conn)
@@ -52,48 +55,6 @@ fires <- fires %>%
 ```{r}
 
 fires %>%
-    group_by(DISCOVERY_DATE) %>%
-    summarise(N = n()) %>%
-    ggplot(aes(DISCOVERY_DATE, N)) + geom_line()
-```
-
-That didn't work. Lets look at some summary statistics
-
-```{r}
-
-fires %>%
-    group_by(DISCOVERY_DATE) %>%
-    summarise(N = n()) %>%
-    summary()
-
-```
-
-The max is pretty far off the median, lets have a look at that
-
-```{r}
-
-fires %>%
-    group_by(DISCOVERY_DATE) %>%
-    summarise(N = n()) %>%
-    filter(N == max(.$N))
-
-```
-
-Lets see how many NA dates we have
-
-```{r}
-
-fires %>%
-    filter(DISCOVERY_DATE %>% is.na) %>%
-    nrow()
-
-```
-
-Lets try that again
-
-```{r}
-
-fires %>%
     filter(!is.na(DISCOVERY_DATE)) %>%
     group_by(DISCOVERY_DATE) %>%
     summarise(N = n()) %>%
@@ -114,12 +75,14 @@ fires %>%
 
 ```{r}
 
+fires <- fires %>%
+    mutate(DISCOVERY_MTH = floor_date(DISCOVERY_DATE, unit = "month"))
+
 fires %>%
-    filter(!is.na(DISCOVERY_DATE)) %>%
-    mutate(DISCOVERY_MTH = floor_date(DISCOVERY_DATE, unit = "month")) %>%
+    filter(!is.na(DISCOVERY_MTH)) %>%
     group_by(DISCOVERY_MTH) %>%
     summarise(N = n()) %>%
-    ggplot(aes(DISCOVERY_MTH, N)) + geom_line()
+    ggplot(aes(x = DISCOVERY_MTH, y = N)) + geom_bar(stat = "identity")
 
 ```
 

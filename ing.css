@@ -129,6 +129,11 @@ body {
   background: rgba(200, 200, 200, 0.5);
 }
 
+.reveal cite {
+    font-style: italic;
+    text-align: right;
+}
+
 .reveal blockquote p:first-child,
 .reveal blockquote p:last-child {
   display: inline-block; }
