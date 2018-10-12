@@ -4,15 +4,105 @@ A practical guide `dplyr`, `ggplot2`, and the tidyverse family
 
 ---
 
-Introduce yourself
+## Dorian Brown
+
+<img src="images/cayman.png" width="70%">
+
+- Grew up on the Cayman Islands
+- Half Dutch half American
+- Studied Pure Mathematics at Leiden University
+- ~2 years Offshore industry, ~2 years ING
 
 ---
 
-What and why
+## Table of Contents
+
+1. Short history of EDA
+2. The pipe operator
+3. Dplyr
+4. Ggplot2
+5. Some examples
 
 ---
 
-History
+## What this talk is
+
+- Introduction to some great R packages
+- A look at what we want from our EDA toolset
+- Some cool tricks I wish I knew when I started
+- An opinion
+
+---
+
+## What this talk isn't
+
+- An introduction to R
+- Me trying to convince you to throw away python
+- Statistically rigorous
+
+---
+
+# Audience Participation
+
+---
+
+## Time before Computers
+
+<img src="images/before_computers.jpg">
+
+---
+
+## Data before Computers
+
+<img src="images/paper_spreadsheet2.jpg">
+
+---
+
+## Visualizations before Computers
+
+<img src="images/world_migration_1858.jpg" width="70%">
+
+---
+
+## Visualizations before Computers
+
+<img src="images/distribution_1805.jpg" width="70%">
+
+---
+
+## The Age of Computers
+
+<img src="images/first_computer.jpg" width="60%">
+
+---
+
+## 1970s Bell Labs & Interactive Statistics
+
+<img src="images/combined_terminal.jpg">
+
+---
+
+## 1970s Bell Labs & Interactive Statistics
+
+<img src="images/john_tukey_sr.png" width="60%">
+
+---
+
+## Aim and Process of EDA
+
+<img src="images/eda_process.png" width="50%">
+
+Explore and gain understanding of the properties and relationships within a dataset
+
+---
+
+## What's the best tool for the job?
+
+We need something that get's out of the way
+
+- inuitive to write
+- flexible
+- easy to read/understand
 
 ---
 
@@ -26,7 +116,13 @@ Making many chained functions readable
 
 ## Sequential Functions
 
-When you have many sequential operations, your code can look like this:
+```python
+on_hill = went_up(jack_jill, 'hill')
+with_water = fetch(on_hill, 'water')
+fallen = fell_down(with_water, 'jack')
+broken = broke(fallen, 'jack')
+after = tumble_after(broken, 'jill')
+```
 
 ```python
 tumble_after(
@@ -38,19 +134,7 @@ tumble_after(
     "jill"
 )
 ```
-
-Order is unclear! <!-- .element: class="fragment fade-in" data-fragment-index="1" -->
-
-```python
-on_hill = went_up(jack_jill, 'hill')
-with_water = fetch(on_hill, 'water')
-fallen = fell_down(with_water, 'jack')
-broken = broke(fallen, 'jack')
-after = tmple_after(broken, 'jill')
-```
 <!-- .element: class="fragment fade-in" data-fragment-index="2" -->
-
-Lots of unneeded variables! <!-- .element: class="fragment fade-in" data-fragment-index="3" -->
 
 ---
 
@@ -79,16 +163,10 @@ Simple stuff
 - `x %>% f(y)` ➡️ `f(x,y)`
 - `x %>% f %>% g` ➡️  `g(f(x))`
 
-Multiple argument functions
+Overriding **"first argument"** rule
 
 - `x %>% f(y, .)` ➡️ `f(y, x)`
 - `x %>% f(y, z = .)` ➡️ `f(y, z = x)`
-
-Fancier stuff
-
-- `f <- . %>% f %>% g` ➡️ `f <- function(x) f(g(x))`
-
-Note: Watchout with fancy stuff, we want readable code
 
 ---
 
@@ -152,15 +230,6 @@ The idea behind dplyr is to have a few simple functions which can be combined to
 Note: Mention how this is similar to SQL. While old fashioned, SQL has been the standard language for dealing with data since 1974 (44 years).
 
 ---
-
-## Data: `nycflights13` dataset
-
-- All flights to/from LaGuardia Airport in New York
-- Only flights in 2013
-
-Notes: To those who know this set, sorry this won't be as interesting.
-
----
 # Loading the data
 
 ``` r
@@ -198,12 +267,14 @@ Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	336776 obs. of  19 variables:
 
 ---
 
-# Selecting columns
+## Selecting columns
 
 ``` r
 > flights %>%
->     select(year, month, day, dep_time, arr_time)
+      select(year, month, day, dep_time, arr_time)
+```
 
+```r
 # A tibble: 336,776 x 5
     year month   day dep_time arr_time
    <int> <int> <int>    <int>    <int>
@@ -213,17 +284,19 @@ Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	336776 obs. of  19 variables:
  4  2013     1     1      544     1004
  5  2013     1     1      554      812
 # ... with 336,766 more rows
-
 ```
+<!-- .element: class="fragment fade-in" data-fragment-index="1" -->
 
 ---
 
-# Removing columns
+## Removing columns
 
 ``` r
 > flights %>%
->     select(-year, -month, -day)
+      select(-year, -month, -day)
+```
 
+```r
 # A tibble: 336,776 x 16
    dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay
       <int>          <int>     <dbl>    <int>          <int>     <dbl>
@@ -237,15 +310,17 @@ Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	336776 obs. of  19 variables:
 #   distance <dbl>, hour <dbl>, minute <dbl>, time_hour <dttm>
 
 ```
+<!-- .element: class="fragment fade-in" data-fragment-index="1" -->
 
 ---
 
-# Selecting and renaming
+## Selecting and renaming
 
 ``` r
 > flights %>%
->     select("departure" = dep_time)
-
+      select("departure" = dep_time)
+```
+```r
 # A tibble: 336,776 x 1
    departure
        <int>
@@ -257,15 +332,18 @@ Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	336776 obs. of  19 variables:
 # ... with 336,766 more rows
 
 ```
+<!-- .element: class="fragment fade-in" data-fragment-index="1" -->
 
 ---
 
-# Selecting with helper functions
+## Selecting with helper functions
 
 ``` r
 > flights %>%
->     select(ends_with("time"))
+      select(ends_with("time"))
+```
 
+```r
 # A tibble: 336,776 x 5
    dep_time sched_dep_time arr_time sched_arr_time air_time
       <int>          <int>    <int>          <int>    <dbl>
@@ -277,10 +355,11 @@ Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	336776 obs. of  19 variables:
 # ... with 336,766 more rows
 
 ```
+<!-- .element: class="fragment fade-in" data-fragment-index="1" -->
 
 ---
 
-# Selecting with helper functions
+## Selecting with helper functions
 
 - `starts_with()`: starts with a prefix
 - `ends_with()`: ends with a prefix
@@ -291,12 +370,14 @@ Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	336776 obs. of  19 variables:
 - `everything()`: all variables.
 ---
 
-# Selecting using column range
+## Selecting using column range
 
 ``` r
 > flights %>%
->     select(year:arr_delay)
+      select(year:arr_delay)
+```
 
+```r
 # A tibble: 336,776 x 9
     year month   day dep_time sched_dep_time dep_delay arr_time
    <int> <int> <int>    <int>          <int>     <dbl>    <int>
@@ -309,19 +390,22 @@ Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	336776 obs. of  19 variables:
 #   arr_delay <dbl>
 
 ```
+<!-- .element: class="fragment fade-in" data-fragment-index="1" -->
 
 ---
 
-# Creating columns with mutate()
+## Creating columns with mutate()
 
 ``` r
 > flights_mut <- flights %>%
->     select(year, month, day, dep_time, sched_dep_time, arr_time, sched_arr_time)
+      select(year, month, day, dep_time, sched_dep_time, arr_time, sched_arr_time)
 >
 > flights_mut %>%
->     mutate(dep_delay = dep_time - sched_dep_time,
->            arr_delay = arr_time - sched_arr_time)
+      mutate(dep_delay = dep_time - sched_dep_time,
+             arr_delay = arr_time - sched_arr_time)
+```
 
+```r
 # A tibble: 336,776 x 9
     year month   day dep_time sched_dep_time arr_time sched_arr_time
    <int> <int> <int>    <int>          <int>    <int>          <int>
@@ -334,6 +418,7 @@ Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	336776 obs. of  19 variables:
 #   arr_delay <int>
 
 ```
+<!-- .element: class="fragment fade-in" data-fragment-index="1" -->
 
 ---
 
@@ -343,8 +428,11 @@ Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	336776 obs. of  19 variables:
 > date_to_epoch <- function(y, m, d) (y + m/12)*365.25*24*3600 + d*3600
 > 
 > flights_mut %>%
->     transmute(year, day, month,
->               epoch = date_to_epoch(year, month, day))
+      transmute(year, day, month,
+                epoch = date_to_epoch(year, month, day))
+```
+
+```r
 
 # A tibble: 336,776 x 4
     year   day month       epoch
@@ -357,6 +445,7 @@ Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	336776 obs. of  19 variables:
 # ... with 336,766 more rows
 
 ```
+<!-- .element: class="fragment fade-in" data-fragment-index="1" -->
 
 ---
 
@@ -364,12 +453,15 @@ Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	336776 obs. of  19 variables:
 
 ---
 
-# Filtering rows
+## Filtering rows
 
 ``` r
 > flights %>%
->     filter(carrier == "UA")
+      filter(carrier == "UA")
  
+```
+
+```r
 # A tibble: 58,665 x 19
     year month   day dep_time sched_dep_time dep_delay arr_time
    <int> <int> <int>    <int>          <int>     <dbl>    <int>
@@ -384,15 +476,19 @@ Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	336776 obs. of  19 variables:
 #   minute <dbl>, time_hour <dttm>
 
 ```
+<!-- .element: class="fragment fade-in" data-fragment-index="1" -->
 
 ---
 
-# Fancy filtering
+## Fancy filtering
 
 ``` r
 > flights %>%
->     filter(sched_dep_time - dep_time < sched_arr_time - arr_time, carrier == "UA")
+      filter(sched_dep_time - dep_time < sched_arr_time - arr_time, carrier == "UA")
 
+```
+
+```r
 # A tibble: 39,433 x 19
     year month   day dep_time sched_dep_time dep_delay arr_time
    <int> <int> <int>    <int>          <int>     <dbl>    <int>
@@ -406,6 +502,7 @@ Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	336776 obs. of  19 variables:
 #   origin <chr>, dest <chr>, air_time <dbl>, distance <dbl>, hour <dbl>,
 #   minute <dbl>, time_hour <dttm>
 ```
+<!-- .element: class="fragment fade-in" data-fragment-index="1" -->
 
 ---
 
@@ -413,11 +510,15 @@ Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	336776 obs. of  19 variables:
 
 ``` r
 > flights %>%
->     filter(is.na(arr_delay)) %>%
->     nrow()
+      filter(is.na(arr_delay)) %>%
+      nrow()
 
+```
+
+```r
 [1] 9430
 ```
+<!-- .element: class="fragment fade-in" data-fragment-index="1" -->
 
 ---
 
@@ -425,8 +526,11 @@ Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	336776 obs. of  19 variables:
 
 ``` r
 > flights %>%
->     filter(dest %in% c("MIA", "JFK"))
+      filter(dest %in% c("MIA", "JFK"))
 
+```
+
+```r
 # A tibble: 11,728 x 19
     year month   day dep_time sched_dep_time dep_delay arr_time
    <int> <int> <int>    <int>          <int>     <dbl>    <int>
@@ -440,14 +544,18 @@ Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	336776 obs. of  19 variables:
 #   origin <chr>, dest <chr>, air_time <dbl>, distance <dbl>, hour <dbl>,
 #   minute <dbl>, time_hour <dttm>
 ```
+<!-- .element: class="fragment fade-in" data-fragment-index="1" -->
 ---
 
-# Order rows with arrange()
+## Order rows with arrange()
 
 ``` r
 > flights %>%
->     arrange(sched_dep_time)
+      arrange(sched_dep_time)
 
+```
+
+```r
 # A tibble: 336,776 x 19
     year month   day dep_time sched_dep_time dep_delay arr_time
    <int> <int> <int>    <int>          <int>     <dbl>    <int>
@@ -462,6 +570,7 @@ Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	336776 obs. of  19 variables:
 #   minute <dbl>, time_hour <dttm>
 
 ```
+<!-- .element: class="fragment fade-in" data-fragment-index="1" -->
 
 ---
 
@@ -469,8 +578,11 @@ Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	336776 obs. of  19 variables:
 
 ``` r
 > flights %>%
->     arrange(year, month, -day)
+      arrange(year, month, -day)
 
+```
+
+```r
 # A tibble: 336,776 x 19
     year month   day dep_time sched_dep_time dep_delay arr_time
    <int> <int> <int>    <int>          <int>     <dbl>    <int>
@@ -484,16 +596,20 @@ Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	336776 obs. of  19 variables:
 #   origin <chr>, dest <chr>, air_time <dbl>, distance <dbl>, hour <dbl>,
 #   minute <dbl>, time_hour <dttm>
 ```
+<!-- .element: class="fragment fade-in" data-fragment-index="1" -->
 
 ---
 
-# Order by function
+## Order by function
 
 ``` r
 > flights %>%
->     arrange(abs(dep_delay)) %>%
->     tail()
+      arrange(abs(dep_delay)) %>%
+      tail()
 
+```
+
+```r
 # A tibble: 6 x 19
    year month   day dep_time sched_dep_time dep_delay arr_time
   <int> <int> <int>    <int>          <int>     <dbl>    <int>
@@ -508,10 +624,11 @@ Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	336776 obs. of  19 variables:
 #   air_time <dbl>, distance <dbl>, hour <dbl>, minute <dbl>,
 #   time_hour <dttm>
 ```
+<!-- .element: class="fragment fade-in" data-fragment-index="1" -->
 
 ---
 
-# Grouping and Aggregation
+## Grouping and Aggregation
 
 ---
 
@@ -519,8 +636,11 @@ Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	336776 obs. of  19 variables:
 
 ``` r
 > flights %>%
->     group_by(carrier)
+      group_by(carrier)
 
+```
+
+```r
 # A tibble: 336,776 x 19
 # Groups:   carrier [16]
     year month   day dep_time sched_dep_time dep_delay arr_time
@@ -535,29 +655,33 @@ Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	336776 obs. of  19 variables:
 #   origin <chr>, dest <chr>, air_time <dbl>, distance <dbl>, hour <dbl>,
 #   minute <dbl>, time_hour <dttm>
 ```
+<!-- .element: class="fragment fade-in" data-fragment-index="1" -->
 
 ---
 
 ## Aggregating with summarise()
 
 ``` r
-> flights %>%
->     group_by(carrier, dest) %>%
->     summarise(N = n(),
->               max_arr_delay = max(arr_delay),
->               max_dep_delay = max(dep_delay))
+> flights %>% 
+    group_by(dest) %>% 
+    summarise(N = n()) %>% 
+    arrange(-N)
 
-# A tibble: 314 x 5
-# Groups:   carrier [?]
-   carrier dest      N max_arr_delay max_dep_delay
-   <chr>   <chr> <int>         <dbl>         <dbl>
- 1 9E      ATL      59            NA            NA
- 2 9E      AUS       2            25            44
- 3 9E      AVL      10            13            19
- 4 9E      BGR       1            NA            34
- 5 9E      BNA     474            NA            NA
-# ... with 304 more rows
 ```
+
+```r
+# A tibble: 105 x 2
+   dest      N
+   <chr> <int>
+ 1 ORD   17283
+ 2 ATL   17215
+ 3 LAX   16174
+ 4 BOS   15508
+ 5 MCO   14082
+# ... with 95 more rows
+
+```
+<!-- .element: class="fragment fade-in" data-fragment-index="1" -->
 
 ---
 
@@ -565,10 +689,12 @@ Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	336776 obs. of  19 variables:
 
 ``` r
 > flights %>%
->     group_by(carrier, dest) %>%
->     mutate(delta_mean_airtime = air_time - mean(air_time, na.rm = T)) %>%
->     select(flight, carrier, dest, delta_mean_airtime)
+      group_by(carrier, dest) %>%
+      mutate(delta_mean_airtime = air_time - mean(air_time, na.rm = T)) %>%
+      select(flight, carrier, dest, delta_mean_airtime)
+```
 
+```r
 # A tibble: 336,776 x 4
 # Groups:   carrier, dest [314]
    flight carrier dest  delta_mean_airtime
@@ -580,18 +706,21 @@ Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	336776 obs. of  19 variables:
  5    461 DL      ATL                 3.84
 # ... with 336,766 more rows
 ```
+<!-- .element: class="fragment fade-in" data-fragment-index="1" -->
 
 ---
 
-# And also joins
+## And also joins
 
 ``` r
 > airlines <- nycflights13::airlines
 > 
 > flights %>%
->     inner_join(airlines, by = c("carrier")) %>%
->     select(flight, carrier, name)
+      inner_join(airlines, by = c("carrier")) %>%
+      select(flight, carrier, name)
+```
 
+```r
 # A tibble: 336,776 x 3
    flight carrier name                    
     <int> <chr>   <chr>                   
@@ -602,6 +731,13 @@ Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	336776 obs. of  19 variables:
  5    461 DL      Delta Air Lines Inc.    
 # ... with 336,766 more rows
 ```
+<!-- .element: class="fragment fade-in" data-fragment-index="1" -->
+
+---
+
+## And lots more
+
+Check out the [dplyr vignette](https://cran.r-project.org/web/packages/dplyr/vignettes/dplyr.html) for more details
 
 ---
 
@@ -609,7 +745,7 @@ Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	336776 obs. of  19 variables:
 
 A grammer of graphics
 
-<!-- .slide: data-background="https://img.devrant.com/devrant/rant/r_179870_JWBHC.jpg" -->
+<!-- .slide: data-background="images/ridgeline.png" -->
 
 ---
 
@@ -670,7 +806,385 @@ In brief, the grammar tells us that a statistical graphic is a mapping from data
 
 ---
 
-# Demo Time!
+## What about Python?
 
-<!-- .slide: data-background="https://media.giphy.com/media/11rIergnpiYpvW/giphy.gif" -->
+<img src="images/python_plotting.png" width="50%">
 
+- Many packages influenced by ggplot2
+- If you want ggplot2 in python, try `plotnine`
+- Direct copy is hard due to R's language features
+
+---
+
+# Lets Explore!
+
+---
+
+```r
+flights <- nycflights13::flights
+
+flights %>%
+    sample_n(10000) %>%
+    ggplot(aes(distance, arr_delay)) + geom_point()
+```
+
+<img src="images/plot1.png">
+<!-- .element: class="fragment fade-in" data-fragment-index="1" -->
+
+---
+
+```r
+flights %>%
+    sample_n(10000) %>%
+    filter(distance < 3000) %>%
+    ggplot(aes(distance, arr_delay)) + geom_point()
+```
+
+<img src="images/plot2.png">
+<!-- .element: class="fragment fade-in" data-fragment-index="1" -->
+
+---
+
+```r
+flights %>%
+    sample_n(10000) %>%
+    filter(distance < 3000) %>%
+    ggplot(aes(distance, arr_delay)) + geom_point(alpha = 0.1) + geom_smooth()
+```
+
+<img src="images/plot3.png">
+<!-- .element: class="fragment fade-in" data-fragment-index="1" -->
+
+---
+
+```r
+flights %>% 
+    mutate(flight_num = paste0(carrier, flight)) %>%
+    group_by(flight_num, carrier) %>%
+    summarise(N = n(),
+              avg_arr_delay = mean(arr_delay),
+              avg_distance = mean(distance))
+```
+
+```r
+# A tibble: 5,725 x 5
+# Groups:   flight_num [?]
+   flight_num carrier     N avg_arr_delay avg_distance
+   <chr>      <chr>   <int>         <dbl>        <dbl>
+ 1 9E2900     9E         59         0.983         765 
+ 2 9E2901     9E         55        15.8           187 
+ 3 9E2902     9E         55        NA             187 
+ 4 9E2903     9E         56        NA             358.
+ 5 9E2904     9E         57        NA             204.
+ 6 9E2905     9E          8        -8.38          187 
+ 7 9E2906     9E         41        NA             301 
+ 8 9E2907     9E         45        NA             301 
+ 9 9E2908     9E         58        NA             301 
+10 9E2909     9E         29        NA             337.
+# ... with 5,715 more rows
+```
+<!-- .element: class="fragment fade-in" data-fragment-index="1" -->
+
+---
+
+```r
+flights %>% 
+    mutate(flight_num = paste0(carrier, flight)) %>%
+    group_by(flight_num, carrier) %>%
+    summarise(N = n(),
+              avg_arr_delay = mean(arr_delay, na.rm = T),
+              avg_distance = mean(distance, na.rm = T))
+```
+
+```r
+# A tibble: 5,725 x 5
+# Groups:   flight_num [?]
+   flight_num carrier     N avg_arr_delay avg_distance
+   <chr>      <chr>   <int>         <dbl>        <dbl>
+ 1 9E2900     9E         59         0.983         765 
+ 2 9E2901     9E         55        15.8           187 
+ 3 9E2902     9E         55         1.87          187 
+ 4 9E2903     9E         56         7.34          358.
+ 5 9E2904     9E         57        12.2           204.
+ 6 9E2905     9E          8        -8.38          187 
+ 7 9E2906     9E         41        14.5           301 
+ 8 9E2907     9E         45         5.30          301 
+ 9 9E2908     9E         58        17.7           301 
+10 9E2909     9E         29        -1             337.
+# ... with 5,715 more rows
+```
+<!-- .element: class="fragment fade-in" data-fragment-index="1" -->
+
+---
+
+```r
+flights %>% 
+    mutate(flight_num = paste0(carrier, flight)) %>%
+    group_by(flight_num, carrier) %>%
+    summarise(N = n(),
+              avg_arr_delay = mean(arr_delay, na.rm = T),
+              avg_distance = mean(distance, na.rm = T)) %>%
+    ggplot(aes(x = avg_distance, y = avg_arr_delay, size = N)) + 
+        geom_point() + 
+        geom_smooth()
+```
+
+<img src="images/plot4.png">
+<!-- .element: class="fragment fade-in" data-fragment-index="1" -->
+
+---
+
+```r
+flights %>% 
+    mutate(flight_num = paste0(carrier, flight)) %>%
+    group_by(flight_num, carrier) %>%
+    summarise(N = n(),
+              avg_arr_delay = mean(arr_delay, na.rm = T),
+              avg_distance = mean(distance, na.rm = T)) %>%
+    filter(N > 20, avg_distance < 3000) %>%
+    ggplot(aes(x = avg_distance, y = avg_arr_delay, size = N)) + 
+        geom_point(alpha = 0.25) + 
+        geom_smooth()
+```
+
+<img src="images/plot5.png">
+<!-- .element: class="fragment fade-in" data-fragment-index="1" -->
+
+---
+
+```r
+library(lubridate)
+
+flights %>%
+    sample_n(10000) %>%
+    mutate(week = as.factor(week(time_hour))) %>%
+    select(week, arr_delay, dep_delay) %>%
+    tidyr::gather("delay_type", "delay", 2:3)
+```
+
+```r
+# A tibble: 20,000 x 3
+   week  delay_type delay
+   <fct> <chr>      <dbl>
+ 1 43    arr_delay     11
+ 2 19    arr_delay    -16
+ 3 30    arr_delay     89
+ 4 36    arr_delay    -21
+ 5 27    arr_delay    -18
+ 6 10    arr_delay     56
+ 7 38    arr_delay    -28
+ 8 44    arr_delay    -30
+ 9 44    arr_delay    -19
+10 22    arr_delay     33
+# ... with 19,990 more rows
+```
+<!-- .element: class="fragment fade-in" data-fragment-index="1" -->
+
+---
+
+```r
+flights %>%
+    sample_n(10000) %>%
+    mutate(week = as.factor(week(time_hour))) %>%
+    select(week, arr_delay, dep_delay) %>%
+    tidyr::gather("delay_type", "delay", 2:3) %>%
+    ggplot(aes(x = week, y = delay, fill = delay_type)) + 
+        geom_boxplot(outlier.shape = NA) + 
+        scale_y_continuous(limits = c(-75,125))
+```
+
+---
+
+<img src="images/plot6.png">
+
+---
+
+```r
+flights %>%
+    sample_n(10000) %>%
+    mutate(week = as.factor(week(time_hour))) %>%
+    select(week, origin, arr_delay, dep_delay) %>%
+    tidyr::gather("delay_type", "delay", 3:4) %>%
+    ggplot(aes(x = week, y = delay, fill = delay_type)) + 
+        geom_boxplot(outlier.shape = NA) + 
+        scale_y_continuous(limits = c(-75,125)) +
+        facet_grid(origin~.)
+```
+
+---
+
+<img src="images/plot7.png" >
+
+---
+
+```r
+flights %>%
+    sample_n(10000) %>%
+    mutate(week = as.factor(week(time_hour))) %>%
+    select(week, origin, arr_delay, dep_delay) %>%
+    tidyr::gather("delay_type", "delay", 3:4) %>%
+    ggplot(aes(x = week, y = delay, fill = origin)) + 
+    geom_boxplot(outlier.shape = NA) + 
+    scale_y_continuous(limits = c(-75,125)) +
+    facet_grid(delay_type~.)
+```
+
+---
+
+<img src="images/plot8.png" >
+
+---
+
+# Let's use some Maps
+
+```r
+> airports <- nycflights13::airports %>% 
+      filter(stringr::str_detect(tzone, "America"), 
+             !stringr::str_detect(tzone, "Anchorage")) %>%
+      select(faa:alt)
+
+# A tibble: 1,196 x 5
+   faa   name                             lat    lon   alt
+   <chr> <chr>                          <dbl>  <dbl> <int>
+ 1 04G   Lansdowne Airport               41.1  -80.6  1044
+ 2 06A   Moton Field Municipal Airport   32.5  -85.7   264
+ 3 06C   Schaumburg Regional             42.0  -88.1   801
+ 4 06N   Randall Airport                 41.4  -74.4   523
+ 5 09J   Jekyll Island Airport           31.1  -81.4    11
+# ... with 1,186 more rows
+```
+
+```r
+flights <- flights %>%
+    left_join(airports, by = c("origin" = "faa")) %>%
+    left_join(airports, by = c("dest" = "faa"), suffix = c("_orig", "_dest"))
+```
+
+```r
+states <- map_data("state")
+```
+
+---
+
+```r
+states <- map_data("state")
+ggplot() +
+    geom_polygon(data = states, 
+                 aes(x = long, y = lat, fill = region, group = group), 
+                 color = "grey", 
+                 fill = "white")
+```
+
+<img src="images/plot9.png">
+
+---
+
+## Store this for later
+
+```r
+dscc_map <- geom_polygon(data = states, 
+                         aes(x = long, y = lat, fill = region, group = group), 
+                         color = "grey", 
+                         fill = "white")
+```
+---
+
+```r
+airports %>%
+    sample_n(1000) %>%
+    ggplot(aes(x = lon, y = lat, color = alt)) + dscc_map + geom_point()
+```
+
+<img src="images/plot10.png">
+<!-- .element: class="fragment fade-in" data-fragment-index="1" -->
+
+---
+
+```r
+flights %>%
+    group_by(dest) %>%
+    summarise(num_flights = n()) %>%
+    ungroup() %>%
+    left_join(airports, by = c("dest" = "faa")) %>%
+    ggplot() +
+        dscc_map +
+        geom_point(aes(x = lon, y = lat, size = num_flights)) + 
+        geom_label_repel(data = . %>% filter(num_flights > 10000), 
+                        aes(x = lon, y = lat, label = name, color = "red"),
+                        nudge_x = -2,
+                        nudge_y = -2)
+```
+
+---
+
+<img src="images/plot11.png">
+
+---
+
+```r
+flights %>%
+    group_by(origin, dest) %>%
+    summarise(N = n()) %>%
+    left_join(airports, by = c("origin" = "faa")) %>%
+    left_join(airports, by = c("dest" = "faa")) %>%
+    ggplot() + 
+        dscc_map +
+        geom_segment(aes(x = lon.x, y = lat.x,
+                         xend = lon.y, yend = lat.y, 
+                         color = origin), 
+                     alpha = 0.5, size = 1)
+```
+---
+
+<img src="images/plot12.png">
+
+---
+
+```r
+flights %>%
+    group_by(origin, dest) %>%
+    summarise(N = n()) %>%
+    left_join(airports, by = c("origin" = "faa")) %>%
+    left_join(airports, by = c("dest" = "faa")) %>%
+    ggplot() + 
+        dscc_map +
+        geom_jitter(aes(x = lon.y, y = lat.y, color = origin), size = 2.5, height=0.25, width=0.25)
+```
+
+---
+
+<img src="images/plot13.png">
+
+---
+
+## A few last closing remarks
+
+---
+
+## Dplyr backends
+
+Instead of using a dataframe, you can make dplyr work on other data sources:
+
+```r
+sc <- spark_connect(master = "local")
+mytable <- tbl(sc, "mytable")
+
+mytable %>%
+    group_by() %>%
+    summarise() %>%
+    etc() %>%
+    collect()
+```
+
+Also supports Hive and most SQL databases
+
+---
+
+## Random Tips
+
+- Checkout the [Rstudio cheatsheets](https://www.rstudio.com/resources/cheatsheets/)
+- Use [rdocumentation.org](http://rdocumentation.org/) for documentation
+
+---
+
+## Thanks for Listening!
