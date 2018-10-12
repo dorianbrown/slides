@@ -8,4 +8,6 @@ In order to get the slides running, you first need to have [reveal-md](https://g
 
 1. Navigate to the root directory of the repository in your terminal.
 2. Execute `reveal-md [presentation-folder]/slides.md`
-3. A browser window should be opened automatically, otherwise you can go to [localhost:1984]
+3. A browser window should be opened automatically, otherwise you can go to `localhost:1984`
+
+As these are my personal presentations, I won't be accepting any any merge requests, but feel free to browse and use them (if you credit me :smiley:)
